@@ -45,10 +45,10 @@ Two things worth knowing before you pick numbers:
 ## 1.
 
 <!-- Your criterion. It must name a number. -->
+At most 2 out of 10 writing get the high-confidence AI.
 
 
-
-**Why this target:**
+**Why this target:**I choose 2 because I don't want to make many people get accused of using AI.
 
 
 
@@ -57,10 +57,10 @@ Two things worth knowing before you pick numbers:
 ## 2.
 
 <!-- Your criterion. -->
+The score of cleary-AI text and cleary-human text differ by at least 0.6
 
 
-
-**Why this target:**
+**Why this target:**I want a gap of at least 0.6 because my unsure band needs room between the two groups.
 
 
 
@@ -69,10 +69,10 @@ Two things worth knowing before you pick numbers:
 ## 3.
 
 <!-- Your criterion. -->
+Text that has score between 0.0 and 1.0 will not fall outside every label’s range.
 
 
-
-**Why this target:**
+**Why this target:**A score with no label means a reader sees nothing or an error, and can’t tell what happened or appeal it.
 
 
 
@@ -81,10 +81,11 @@ Two things worth knowing before you pick numbers:
 ## 4.
 
 <!-- Your criterion. -->
+100% appeal with valid 'content_id' will change the status to 'under_review' and appear in 'GET /log'.
 
 
-
-**Why this target:**
+**Why this target:**I choose 100% because an appeal is the only recourse for someone labeled wrongly.
+If one silently fails, that person has no way to be heard and I wouldn’t know.
 
 
 
@@ -93,10 +94,11 @@ Two things worth knowing before you pick numbers:
 ## 5.
 
 <!-- Your criterion. -->
+When text is missing, the service returns status code 400 with an error message,
+and does not crash or write a log entry.
 
 
-
-**Why this target:**
+**Why this target:**I return 400 because the problem is the request, not the server. I skip the log entry because the audit log is meant to record real decisions, and bad requests would clutter it.
 
 
 
