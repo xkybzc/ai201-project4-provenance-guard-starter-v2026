@@ -30,6 +30,8 @@ from flask import Flask, jsonify, request
 
 import audit
 import config
+import scoring
+import stylometry
 
 MAX_TEXT_CHARS = 2000
 
@@ -221,23 +223,27 @@ def submit():
 
     import detector
     model_score = detector.model_signal(text)
+    style_score = stylometry.style_signal(text)
+    combined = scoring.combine_signals(model_score, style_score)
 
     content_id = uuid.uuid4().hex[:12]
     audit.log_decision(
         content_id=content_id,
         creator_id=creator_id,
         model_score=model_score,
+        style_score=style_score,
+        combined_score=combined,
         status="decided",
     )
 
     return jsonify({
         "content_id": content_id,
         "creator_id": creator_id,
-        "guess": "unsure",              # placeholder until Milestone 4/5
-        "confidence": model_score,      # placeholder until Milestone 4
+        "guess": "unsure",              # placeholder until Milestone 5
+        "confidence": combined,
         "label": "not built yet",       # placeholder until Milestone 5
         "model_score": model_score,
-        "style_score": None,            # Milestone 4
+        "style_score": style_score,
     }), 200
 
 

@@ -39,91 +39,92 @@ def sentences(text: str) -> list[str]:
     parts = re.split(r"(?<=[.!?])\s+", text.strip())
     return [p for p in parts if p.strip()]
 
-
 def words(text: str) -> list[str]:
     """Split into lowercase words, punctuation stripped. Given to you."""
     return re.findall(r"[a-z0-9']+", text.lower())
 
+MIN_WORDS = 20
+MIN_SENTENCES = 3
+TTR_WINDOW = 100
+SPREAD_HUMAN_CV = 0.6
+TTR_LOW, TTR_HIGH = 0.45, 0.80
+PUNCT_LOW, PUNCT_HIGH = 0.05, 0.25
+WEIGHTS = {"spread": 0.5, "ttr": 0.3, "punct": 0.2}
+NEUTRAL = 0.5
+_PUNCT = re.compile(r"[,;:.!?\u2014\u2013\-()\"]")
 
-# ── The three measures — YOU BUILD THESE ─────────────────────────────────────
+def _clamp(x: float) -> float:
+    return max(0.0, min(1.0, x))
 
 def sentence_length_spread(text: str) -> float:
     """
-    How much sentence length varies. ← TODO
+    How much sentence length varies: stdev / mean of words per sentence.
 
-    Returns:
-        A float. Decide yourself what scale it's on and which direction means
-        "more human" — then write that down, because your combining rule
-        depends on knowing it.
+    Scale: 0.0 means every sentence is the same length. Around 0.6 or more is
+    lumpy, human-looking variation. HIGH = more human.
 
-    A hint on what you're reaching for: the standard deviation of sentence
-    lengths, probably divided by the mean so a long text and a short one are
-    comparable. `statistics.stdev` is imported for you.
-
-    Watch the edge case: a one-sentence submission has no spread at all, and
-    `stdev` raises on fewer than two values. Decide what that should return
-    before the attack set decides for you.
+    Edge case: fewer than two sentences has no spread, and `stdev` would raise,
+    so this returns 0.0. That reads as "perfectly even", which is why
+    style_signal() refuses to score texts this short instead of trusting it.
     """
-    # TODO: replace this
-    return 0.0
-
+    lengths = [len(words(s)) for s in sentences(text)]
+    if len(lengths) < 2:
+        return 0.0
+    mean = statistics.mean(lengths)
+    if mean == 0:
+        return 0.0
+    return statistics.pstdev(lengths) / mean
 
 def type_token_ratio(text: str) -> float:
     """
-    Unique words over total words. ← TODO
-
-    Returns:
-        A float between 0 and 1. Higher means more varied vocabulary.
-
-    Worth knowing before you rely on it: this measure falls as text gets
-    longer, because common words repeat. Two texts of different lengths aren't
-    directly comparable on it, and if your test inputs vary a lot in length,
-    that alone can look like a signal.
+    Unique words over total words, on the first TTR_WINDOW words.
+    Returns a float between 0 and 1. HIGH = more varied vocabulary = more human.
+    Measured on a fixed window because the ratio falls as text gets longer;
+    otherwise a long text and a short one aren't comparable.
     """
-    # TODO: replace this
-    return 0.0
-
-
+    w = words(text)[:TTR_WINDOW]
+    if not w:
+        return 0.0
+    return len(set(w)) / len(w)
+ 
+ 
 def punctuation_density(text: str) -> float:
     """
-    How much punctuation, relative to length. ← TODO
+    Punctuation marks per word (see _PUNCT for what counts).
 
-    Returns:
-        A float. Whether you count all punctuation or only some kinds — commas,
-        semicolons, dashes — is a real choice. Semicolons and em dashes are
-        more interesting than full stops, because they vary more between
-        writers.
+    HIGH = more punctuation = treated as more AI-like. That direction is a
+    guess, not a fact: casual human writing can be full of commas, dashes and
+    exclamation marks too. Test it before you trust it.
     """
-    # TODO: replace this
-    return 0.0
-
-
-# ── Combining them ───────────────────────────────────────────────────────────
+    w = words(text)
+    if not w:
+        return 0.0
+    return len(_PUNCT.findall(text)) / len(w)
 
 def style_signal(text: str) -> float:
     """
-    The style signal as a 0–1 score. **Higher means more likely AI.** ← TODO
-
-    Combine your three measures into one number. Same direction as
-    `detector.model_signal`, so that `scoring.combine_signals` can treat them
-    the same way — if one of your signals runs backwards, everything above it
-    is wrong in a way that's hard to see.
-
-    Two things to decide and write down:
-
-      1. Which direction each measure points. Low spread means more AI-ish, so
-         it needs flipping. Work out which of your three need that.
-      2. How to get each onto a comparable scale. A raw type-token ratio sits
-         between 0 and 1; a raw punctuation count doesn't. Adding them
-         unscaled means whichever has the bigger numbers wins by default.
-
-    Test it on the four calibration inputs from Milestone 4 — clearly AI,
-    clearly human, plain conventional human writing, lightly-edited AI — before
-    you trust it. Plain and ordinary, not formal: formal prose reads as *human*
-    to signal one, and it is plain writing that gets accused.
+    The style signal as a 0–1 score. **Higher means more likely AI.**
+    Each raw measure is turned into an "AI-likeness" from 0.0 to 1.0, so they're
+    on the same scale and the same direction as detector.model_signal:
+        spread  : LOW spread        -> more AI   (flipped)
+        ttr     : LOW variety       -> more AI   (flipped)
+        punct   : HIGH density      -> more AI   (not flipped)
+    Then a weighted average (WEIGHTS above). Returns NEUTRAL (0.5) when there is
+    too little text to measure.
     """
-    # TODO: replace this
-    return 0.5
+    s = sentences(text)
+    w = words(text)
+    if len(w) < MIN_WORDS or len(s) < MIN_SENTENCES:
+        return NEUTRAL
+    spread_ai = 1.0 - _clamp(sentence_length_spread(text) / SPREAD_HUMAN_CV)
+    ttr_ai = _clamp((TTR_HIGH - type_token_ratio(text)) / (TTR_HIGH - TTR_LOW))
+    punct_ai = _clamp((punctuation_density(text) - PUNCT_LOW) / (PUNCT_HIGH - PUNCT_LOW))
+    score = (
+        WEIGHTS["spread"] * spread_ai
+        + WEIGHTS["ttr"] * ttr_ai
+        + WEIGHTS["punct"] * punct_ai
+    )
+    return round(_clamp(score), 4)
 
 
 if __name__ == "__main__":

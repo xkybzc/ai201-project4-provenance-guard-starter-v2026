@@ -9,6 +9,7 @@ You'll edit the thresholds in Milestone 5 and the rate limits in unit 8.
 import os
 from pathlib import Path
 
+
 ROOT = Path(__file__).parent
 
 
@@ -46,7 +47,6 @@ DETECTOR_MODEL = os.getenv("AI201_DETECTOR_MODEL", "gpt2")
 # 300 words, which is enough for the signal to mean something.
 DETECTOR_MAX_TOKENS = 400
 
-
 # ─── Scoring (Milestone 4) ───────────────────────────────────────────────────
 # How much each signal counts toward the combined score.
 #
@@ -54,8 +54,8 @@ DETECTOR_MAX_TOKENS = 400
 # down BEFORE you code it, and to put the numbers in your README. Whatever you
 # decide, it goes here.
 
-WEIGHT_MODEL_SIGNAL = 0.5
-WEIGHT_STYLE_SIGNAL = 0.5
+WEIGHT_MODEL_SIGNAL = 0.8
+WEIGHT_STYLE_SIGNAL = 0.2
 
 
 # ─── Thresholds (Milestone 5) ────────────────────────────────────────────────

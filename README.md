@@ -72,16 +72,21 @@
 <!-- Write the rule in words, then give the numbers. What happens when the two
      signals disagree? -->
 
-**The rule:**
+**The rule:**I take a weighted average of the two scores, 80% model signal and 20% style
+signal. The model signal leads because it was the only signal that clearly
+separated my test pieces, and the style signal can't read the text, so cheap
+changes like typos can move it.
 
-**The numbers:**
+**The numbers:**- Weights: model 0.8, style 0.2
 
 **Where it lives:** `scoring.py::combine_signals`
 
 <!-- ⚠️ The grader checks your code against that line. If your rule lives
      somewhere else, say where. -->
 
-**A case where my two signals split, and what my rule does with it:**
+**A case where my two signals split, and what my rule does with it:**My clearly AI test piece scored 0.8649 on the model signal and 0.3286 on the
+style signal, a gap of 0.54. The rule gives it 0.758: the style signal pulls
+the model's score down by about 0.11 but doesn't override it.
 
 
 
