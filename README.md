@@ -101,14 +101,15 @@ the model's score down by about 0.11 but doesn't override it.
 
 | Label | Score range | The exact text a reader sees |
 |---|---|---|
-| high-confidence human |  |  |
-| unsure |  |  |
-| high-confidence AI |  |  |
+| high-confidence human | 0.00 – 0.35 | We think this was written by a person. No action is needed. |
+| unsure | 0.35 – 0.65 | We couldn't tell whether this was written by a person or with an AI tool. Nothing happens to your piece because of this. If you'd like, you can tell us about how you wrote it. |
+| high-confidence AI | 0.65 – 1.00 | We think this was probably written with an AI tool. If you wrote it yourself, you can appeal and a person will review it. |
 
 **Why I worded the "unsure" one this way:**
 <!-- It's the hardest of the three. It has to admit uncertainty without
      sounding like an accusation, because the person reading it may well have
      written every word themselves. -->
+I wrote “we couldn’t tell” instead of “this may be AI” because the uncertainty belongs to my system, not the writer, and most people who land in this range probably wrote their own work. I said plainly that nothing happens to the piece, because an unsure label with no stated consequence feels like a warning. Finally I offered a way to tell us how they wrote it, so the label ends with something they can do rather than something done to them.
 
 
 
@@ -125,13 +126,6 @@ the model's score down by about 0.11 but doesn't override it.
      signal scores - model_score and style_score. Unit 8's tools read those
      two off the response, so leaving them out costs you next unit's
      diagnostics. -->
-
-Request body (`valid.json`):
-
-```json
-{"text": "The quick brown fox jumps over the lazy dog. I wrote this myself on a rainy afternoon.", "creator_id": "khoi"}
-```
-
 ```bash
 $ curl.exe -X POST http://127.0.0.1:5000/submit -H "Content-Type: application/json" -d @valid.json
 ```
@@ -151,13 +145,16 @@ $ curl.exe -X POST http://127.0.0.1:5000/submit -H "Content-Type: application/js
 **An appeal**
 
 ```bash
-$ curl -X POST http://127.0.0.1:5000/appeal \
-  -H "Content-Type: application/json" \
-  -d '{"content_id": "...", "reasoning": "..."}'
+$ curl.exe -X POST http://127.0.0.1:5000/appeal -H "Content-Type: application/json" -d @appeal.json
 ```
 
 ```json
-
+{
+  "content_id": "6f274b1c4d99",
+  "message": "Thanks \u2014 your appeal has been recorded and a person will review it.",
+  "recorded_at": "2026-11-02T00:51:46+00:00",
+  "status": "under_review"
+}
 ```
 
 **What the log shows afterwards**
