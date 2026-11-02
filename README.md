@@ -121,14 +121,26 @@
      two off the response, so leaving them out costs you next unit's
      diagnostics. -->
 
+Request body (`valid.json`):
+
+```json
+{"text": "The quick brown fox jumps over the lazy dog. I wrote this myself on a rainy afternoon.", "creator_id": "khoi"}
+```
+
 ```bash
-$ curl -X POST http://127.0.0.1:5000/submit \
-  -H "Content-Type: application/json" \
-  -d '{"text": "...", "creator_id": "..."}'
+$ curl.exe -X POST http://127.0.0.1:5000/submit -H "Content-Type: application/json" -d @valid.json
 ```
 
 ```json
-
+{
+  "confidence": 0.1727,
+  "content_id": "fd5cd03b3f74",
+  "creator_id": "khoi",
+  "guess": "unsure",
+  "label": "not built yet",
+  "model_score": 0.1727,
+  "style_score": null
+}
 ```
 
 **An appeal**
@@ -150,7 +162,33 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
 ```
 
 ```json
-
+{
+  "count": 2,
+  "entries": [
+    {
+      "combined_score": null,
+      "content_id": "c3c975928dc1",
+      "creator_id": "khoi",
+      "guess": null,
+      "label": null,
+      "model_score": 0.1727,
+      "status": "decided",
+      "style_score": null,
+      "timestamp": "2026-11-02T00:03:33+00:00"
+    },
+    {
+      "combined_score": null,
+      "content_id": "fd5cd03b3f74",
+      "creator_id": "khoi",
+      "guess": null,
+      "label": null,
+      "model_score": 0.1727,
+      "status": "decided",
+      "style_score": null,
+      "timestamp": "2026-11-02T00:10:20+00:00"
+    }
+  ]
+}
 ```
 
 ---

@@ -31,6 +31,8 @@ from flask import Flask, jsonify, request
 import audit
 import config
 
+MAX_TEXT_CHARS = 2000
+
 app = Flask(__name__)
 
 
@@ -200,26 +202,42 @@ def submit():
     a malformed input is one of the most common real failures there is.
     """
     
-    payload = request.get_json(silent=True) or {}
+    payload = request.get_json(silent=True)
+    # A JSON list or string has no .get — treat anything that isn't an object
+    # as an empty payload so it falls through to the 400 below.
+    if not isinstance(payload, dict):
+        payload = {}
+
     text = payload.get("text")
     creator_id = payload.get("creator_id", "unknown")
+
+    # Validate BEFORE running the detector, and before anything is logged:
+    # bad input gets a 400 and leaves no audit entry (acceptance criterion 5).
+    if not isinstance(text, str) or not text.strip() or len(text) > MAX_TEXT_CHARS:
+        return jsonify({
+            "error": "bad_request",
+            "message": f"Send JSON with a non-empty \"text\" field of at most {MAX_TEXT_CHARS} characters.",
+        }), 400
 
     import detector
     model_score = detector.model_signal(text)
 
-    if not isinstance(text, str) or not text.strip():
-        return jsonify({"error": "bad_request", "message": "Send JSON with a non-empty \"text\" field."}), 400
+    content_id = uuid.uuid4().hex[:12]
+    audit.log_decision(
+        content_id=content_id,
+        creator_id=creator_id,
+        model_score=model_score,
+        status="decided",
+    )
 
-    content_id = str(uuid.uuid4().hex[:12])
-    audit.log_decision(content_id=content_id, creator_id=creator_id, model_score=model_score, status="decided")
     return jsonify({
-        "content_id": "hardcoded",
-        "creator_id": "creator_id",
-        "guess": "unsure",
-        "confidence": model_score,
-        "label": "not built yet",
+        "content_id": content_id,
+        "creator_id": creator_id,
+        "guess": "unsure",              # placeholder until Milestone 4/5
+        "confidence": model_score,      # placeholder until Milestone 4
+        "label": "not built yet",       # placeholder until Milestone 5
         "model_score": model_score,
-        "style_score": None,
+        "style_score": None,            # Milestone 4
     }), 200
 
 
