@@ -38,7 +38,8 @@
 
 <!-- The path a submission takes, from arriving to the label a reader sees.
      Six or seven steps — this is the trace you wrote in Milestone 1. -->
-
+A writer's text arrives at submit with a creator_id. The route first checks it: missing, empty, or over 2000 characters gets a 400 and nothing is logged. Valid text goes through two signals: detector.model_signal (a local GPT-2 model measuring how predictable the words are) and stylometry.style_signal (sentence-length spread, word variety, and punctuation density).
+scoring.combine_signals blends them into one score, 80% model and 20% style, and scoring.score_to_label turns that score into one of three plain-English labels using the thresholds in config.py (0.35 and 0.65). The decision, with both signal scores, is appended to logs/audit.jsonl and returned to the writer with a content_id. If they think it's wrong, appeal with that id records their reasoning and moves the item to under_review next to the original decision.
 
 
 ---
@@ -53,19 +54,35 @@
 
 ### Signal one — the model signal
 
-**What it measures:**
+**What it measures:**How predictable the text is to a language model. GPT-2
+reads the text, and the signal reports how little each next word surprised it,
+scaled from 0 to 1. Low surprise gives a high score.
 
-**Why that might differ between human and AI writing:**
+**Why that might differ between human and AI writing:**AI text is made by
+picking likely next words, so another language model finds it easy to predict.
+People choose odd words, break patterns, mention things the model has never
+seen, and write about their own lives.
 
-**What it can't see:**
+**What it can't see:**It can't see who wrote the text, only how expected the
+words are. AI text that a person has roughed up with edits, odd
+phrasing or typos scores lower, even though a machine wrote almost all of it.
 
 ### Signal two — the style signal
 
-**What it measures:**
+**What it measures:**The shape of the text, not its content. It measures how
+much sentence length varies, the ratio of unique words to total words, and how
+dense the punctuation is, and it combines them into one score from 0 to 1.
 
-**Why that might differ between human and AI writing:**
+**Why that might differ between human and AI writing:**AI text tends toward
+even sentence lengths, steady vocabulary and regular punctuation. People mix
+short and long sentences, repeat themselves or reach for rare words, and use
+punctuation unevenly.
 
-**What it can't see:**
+**What it can't see:**It never reads what the words mean. It only counts them.
+Adding typos raises the unique-word ratio and makes AI text look more human.
+Splitting a few long sentences changes the spread without changing any content.
+It also wrongly flags people who happen to write evenly, and on short texts the
+counts are too noisy to mean much.
 
 ### The combining rule
 
@@ -199,15 +216,15 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:*I asked Claude to help me build appeal in app.py
+- *What came back:*A route that validates content_id and reasoning with 400s, reads creator_id off the original decision entry, calls log_appeal, and returns the new entry's timestamp as recorded_at.
+- *What I changed:*I add when entries_for find nothing, it return 404
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:*I asked for help wording the "unsure" label and for the reasoning paragraph explaining it, after writing the three labels' ranges myself.
+- *What came back:*A draft label that put the uncertainty on the system ("we couldn't tell") rather than the writer, stated that nothing happens to the piece, and ended with something the writer could do.
+- *What I changed:*I add an offer to appeal if they think they are wrong.
 
 <!-- ═══════════════════════ UNIT 8 — THE TEST ═══════════════════════ -->
 
