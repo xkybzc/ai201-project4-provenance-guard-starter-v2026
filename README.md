@@ -293,11 +293,21 @@ The first one is slow while the model loads.
 <!-- Choose entries that show the interesting failures, not the ten easiest. -->
 
 ```json
-
+{"timestamp": "2026-11-02T00:03:33+00:00", "content_id": "c3c975928dc1", "creator_id": "khoi", "guess": null, "model_score": 0.1727, "style_score": null, "combined_score": null, "label": null, "status": "decided"}
+{"timestamp": "2026-11-02T00:10:20+00:00", "content_id": "fd5cd03b3f74", "creator_id": "khoi", "guess": null, "model_score": 0.1727, "style_score": null, "combined_score": null, "label": null, "status": "decided"}
+{"timestamp": "2026-11-02T00:50:59+00:00", "content_id": "6f274b1c4d99", "creator_id": "khoi", "guess": null, "model_score": 0.1727, "style_score": 0.5, "combined_score": 0.23816, "label": null, "status": "decided"}
+{"timestamp": "2026-11-02T00:51:46+00:00", "content_id": "6f274b1c4d99", "creator_id": "khoi", "event": "appeal", "status": "under_review", "reasoning": "I wrote this myself on a rainy afternoon and have the drafts to show it."}
+{"timestamp": "2026-11-02T00:51:46+00:00", "content_id": "6f274b1c4d99", "creator_id": "khoi", "event": "appeal", "status": "under_review", "reasoning": "I wrote this myself on a rainy afternoon and have the drafts to show it."}
+{"timestamp": "2026-11-08T01:24:34+00:00", "content_id": "629986ebcbdf", "creator_id": "flood_tester", "guess": null, "model_score": 0.2587, "style_score": 0.5, "combined_score": 0.30696, "label": null, "status": "decided"}
+{"timestamp": "2026-11-08T01:24:34+00:00", "content_id": "ad79a21acc00", "creator_id": "flood_tester", "guess": null, "model_score": 0.2587, "style_score": 0.5, "combined_score": 0.30696, "label": null, "status": "decided"}
+{"timestamp": "2026-11-08T01:24:34+00:00", "content_id": "d72acfac5a33", "creator_id": "flood_tester", "guess": null, "model_score": 0.2587, "style_score": 0.5, "combined_score": 0.30696, "label": null, "status": "decided"}
+{"timestamp": "2026-11-08T01:24:35+00:00", "content_id": "415e29307dba", "creator_id": "flood_tester", "guess": null, "model_score": 0.2587, "style_score": 0.5, "combined_score": 0.30696, "label": null, "status": "decided"}
+{"timestamp": "2026-11-08T01:24:35+00:00", "content_id": "42f2ca93ae74", "creator_id": "flood_tester", "guess": null, "model_score": 0.2587, "style_score": 0.5, "combined_score": 0.30696, "label": null, "status": "decided"}
 ```
 
 **The single worst outcome** — the one I'd least want to explain to a writer
 whose work got caught by it:
+{"timestamp": "2026-11-08T01:36:39+00:00", "content_id": "d70e5352ef20", "creator_id": "attacker_FP07", "guess": "ai", "model_score": 0.8816, "style_score": 0.396, "combined_score": 0.7844800000000002, "label": "We think this was probably written with an AI tool. If you wrote it yourself, you can appeal and a person will review it.", "status": "decided"}
 
 
 
