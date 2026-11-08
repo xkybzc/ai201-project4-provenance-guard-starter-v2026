@@ -357,8 +357,11 @@ from `results/run_2026-11-07_2119_before.md` ("my own writing", Trial 1), produc
                         signal at 0.6, so it dragged the whole score down."
 
      Look for a pattern. Five failures on one signal is one problem, not five. -->
-
-
+Criterion 2 is MISSED: All 3 runs return a gap score of 0.32 (target 0.6). Diagnosis:
+My first signal measures how predictable a text is to GPT-2, and on its own it separated
+them by just 0.41 (0.853 vs 0.443), so no weighting could have reached 0.6.
+My second signal didn't help: it rated the AI texts slightly less AI-like than the human ones,
+and gave 4 of the 10 passages a flat 0.5 which cost the gap about 0.01.
 
 ---
 
