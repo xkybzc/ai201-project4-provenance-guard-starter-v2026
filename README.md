@@ -226,6 +226,24 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
 - *What came back:*A draft label that put the uncertainty on the system ("we couldn't tell") rather than the writer, stated that nothing happens to the piece, and ended with something the writer could do.
 - *What I changed:*I add an offer to appeal if they think they are wrong.
 
+**Moment 3**
+
+- *What I asked for:* Help justifying my rate limits for the README.
+- *What came back:* It said 5 per minute and 50 per day is normal for normal writer.
+Also, Claude point out some point that more than that is almost impossible, like calling
+GPT-2 have taken a few seconds.
+- *What I changed:* I set my own limit of 8 per minute and 40 per day instead
+
+**Moment 4**
+
+- *What I asked for:* Help writing scenarios.py for my five criteria.
+- *What came back:* A scenarios.py with five clearly-AI paragraphs written by
+  Claude, unusual inputs for label coverage, and bad-input request bodies for
+  criterion 5.
+- *What I changed:* I filled the ten writing slots with passages. I also
+  added the "error" and "message" fields to run_eval.py so criterion 5 records
+  the error message.
+
 <!-- ═══════════════════════ UNIT 8 — THE TEST ═══════════════════════ -->
 
 ---
@@ -403,13 +421,22 @@ false-positive attacks. Signal one gives polished human writing high scores
 
 <!-- For each attack still getting through and each criterion still missed:
      what you'd do, and why you stopped. -->
-
+**Criterion 2: the score gap (missed, 0.32 vs 0.6).**
+What I'd do: improve signal one, which is the stage my diagnosis named.
+Why I stopped: Milestone 5 allows one change, and a new signal is a much bigger
+job than one change. My threshold fix made signal one's high scores on human
+writing less harmful, but it doesn't change the scores, so the gap is unchanged.
 
 
 **The trade I'd make if this ran for real:**
 
 <!-- Two sentences. Fewer wrong accusations means more AI text getting through.
      Say which way you'd go and WHO PAYS FOR IT. -->
+     I'd keep the wider unsure band and accept more AI text getting through, because
+     a wrong accusation can hurt a real writer's reputation and grades, while a
+     missed detection costs the site much less. The people who pay are readers and
+     honest writers on the site, who sometimes see AI-written work go unlabelled
+     next to their own.
 
 
 
