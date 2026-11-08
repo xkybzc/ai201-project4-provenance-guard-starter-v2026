@@ -367,9 +367,13 @@ and gave 4 of the 10 passages a flat 0.5 which cost the gap about 0.01.
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:**I change AI_THRESHOLD in config.py to 0.8
 
-**Which diagnosis pointed at it:**
+**Which diagnosis pointed at it:**My criterion 2 diagnosis and the
+false-positive attacks. Signal one gives polished human writing high scores
+ so real writing was landing in the high-confidence AI label. I can't fix
+ signal one in one change, so I widened the unsure band, so that these writers get "unsure" instead of an accusation.
+
 
 ### Attack Run — After
 
@@ -381,7 +385,16 @@ and gave 4 of the 10 passages a flat 0.5 which cost the gap about 0.01.
 
 <!-- Widening the unsure band usually fixes one problem and creates another.
      Reporting that trade honestly is worth full credit. -->
+     Yes for the problem it targeted, at a cost on the other side.
 
+- **Fixed:** All 6 false-positive attacks that were labelled AI now
+  get "unsure", so 0 of 8 real-writing attacks are accused (before: 6 of 8).
+  Criterion 1 went from 1/10 to 0/10 across all three trials.
+- **Cost:** 3 of my 5 clearly-AI texts dropped from "AI" to "unsure" (only
+  2 of 5 still get the AI label). My system now accuses less often, including
+  when it should.
+- **No change:** Criterion 2's gap is still 0.32, because a threshold changes
+  which label a score gets, not the score itself.
 
 
 ---
