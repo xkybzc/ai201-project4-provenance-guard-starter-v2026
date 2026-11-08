@@ -319,17 +319,27 @@ whose work got caught by it:
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Writing flagged high-confidence AI | at most 2 of 10 | 1/10 | 1/10 | 1/10 | MET |
+| 2. Gap between clearly-AI and clearly-human scores | ≥ 0.6 | avg 0.32 | avg 0.32 | avg 0.32  | MISSED |
+| 3. Every score gets a label | 7 of 7 | 7/7 | 7/7 | 7/7 | MET |
+| 4. Appeal changes status and appears in log | 5 of 5 | 5/5 changed, 5/5 logged | same | same | MET |
+| 5. Missing text returns 400, no crash, no log entry | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
 
 **Real output from one trial**, pasted as text, naming the file and function
 that produced it:
-
+from `results/run_2026-11-07_2119_before.md` ("my own writing", Trial 1), produced by `run_eval.py::main`, `app.py::submit`.
 ```json
-
+{
+  "status": 200,
+  "guess": "ai",
+  "confidence": 0.70418,
+  "model_score": 0.7305,
+  "style_score": 0.5989,
+  "label": "We think this was probably written with an AI tool. If you wrote it yourself, you can appeal and a person will review it.",
+  "error": null,
+  "message": null,
+  "sent": "Anthony looked at the picture some time, slowly pursing up his lips, a"
+}
 ```
 
 **Diagnoses**

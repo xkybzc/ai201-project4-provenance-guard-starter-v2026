@@ -126,6 +126,8 @@ def main():
                         "model_score": payload.get("model_score"),
                         "style_score": payload.get("style_score"),
                         "label": payload.get("label"),
+                        "error": payload.get("error"),
+                        "message": payload.get("message"),
                         "sent": preview,
                     })
                 except Exception as exc:  # noqa: BLE001
